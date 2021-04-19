@@ -1,0 +1,153 @@
+{% extends 'products/base/base.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card">
+        <h5 class="card-header">Choose checkout options</h5>
+        <div class="card-body" id="form-wrapper">
+          <h5 class="card-title"></h5>
+          <p class="card-text"></p>
+          <form id="form">
+            <div class="row g-3" id="user-info">
+              <div class="col m-1 p-1">
+                <input type="text" class="form-control" placeholder="Name" id='inputName' aria-label="Name"/>
+              </div>
+              <div class="col m-1 p-1">
+                <input type="email" class="form-control" placeholder="Email" id='inputEmail' aria-label="Email"/>
+              </div>
+              <hr/>
+            </div>
+
+            <div class="row g-3" id="shipping-info">
+              <div class="col-12">
+                <label for="inputAddress" class="form-label">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="Address Line 1"/>
+              </div>
+              <div class="col-md-6">
+                <label for="inputCity" class="form-label">City</label>
+                <input type="text" class="form-control" id="inputCity"/>
+              </div>
+              <div class="col-md-4">
+                <label for="inputState" class="form-label">State</label>
+                <select id="inputState" class="form-select">
+                  <option selected="selected">Choose...</option>
+                  <option>...</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label for="inputZip" class="form-label">Zip</label>
+                <input type="text" class="form-control" id="inputZip"/>
+              </div>
+              <hr/>
+            </div>
+            <div class="row g-3 mt-1">
+              <button type="submit" class="btn btn-primary" id="form-button">
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="card d-none" id="payment-info">
+        <div class="card-body">
+          <span>Payment options</span>
+          <div class="row g-3 mt-1">
+            <button type="submit" class="btn btn-outline-primary" id="payment-btn">
+              Make payment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h3>Order Summary</h3>
+          <hr/>
+          {% include 'cart/snippets/table-header.html' %}
+          {% include 'cart/snippets/item-rows.html' %}
+          <hr/>
+          <h5>Items:
+            {{order.get_cart_items}}</h5>
+          <h5>Total: ₹{{order.get_cart_total}}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+       var shipping = "{{order.shipping}}";
+    var total = "{{order.get_cart_total}}"
+    if (shipping == "False") {
+      document
+        .getElementById("shipping-info")
+        .innerHTML = "";
+    }
+    if ("{{request.user.is_authenticated}}" == "True") {
+      document
+        .getElementById("user-info")
+        .innerHTML = "";
+    }
+
+    var form = document.getElementById("form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      document
+        .getElementById("form-button")
+        .classList
+        .add("d-none");
+      document
+        .getElementById("payment-info")
+        .classList
+        .remove("d-none");
+    });
+    document
+      .getElementById("payment-btn")
+      .addEventListener("click", function (e) {
+        submitFormData();
+      });
+
+    function submitFormData() {
+      var userFormData = {
+        'name': null,
+        'email': null,
+        'total': total
+      }
+
+      var userShippingInfo = {
+        'address': null,
+        'city': null,
+        'state': null,
+        'zip': null
+      }
+
+      if (shipping != 'False') {
+        userShippingInfo.address = form.inputAddress.value,
+        userShippingInfo.city = form.inputCity.value,
+        userShippingInfo.state = form.inputState.value,
+        userShippingInfo.zip = form.inputZip.value
+      }
+
+      if (user == "AnonymousUser") {
+        userFormData.name = form.inputName.value,
+        userFormData.email = form.inputEmail.value
+      }
+
+      var url = '/checkout/payment/'
+      fetch(url, {
+        method: "POST",
+        headers: {
+          'content-type': "application/json",
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({'form': userFormData, 'shipping': userShippingInfo})
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          window.location.href = "{% url 'products:all_products' %}"
+        })
+    }
+  </script>
+{% endblock content %}

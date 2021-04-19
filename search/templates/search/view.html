@@ -1,0 +1,15 @@
+{% extends 'products/base/base.html' %}
+
+{% block content %}
+  <div class="row">
+    {% if request.GET.q %}
+      <div class="col-12 mb-3">
+        Results for
+        <b>{{request.GET.q}}</b>
+      </div>
+      <hr>
+    {% endif %}
+  </div>
+
+  {% include 'products/base/cards.html' %}
+{% endblock content %}

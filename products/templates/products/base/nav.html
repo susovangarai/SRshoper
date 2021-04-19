@@ -1,0 +1,62 @@
+{% load static %}
+{% url 'products:add_product' as add_product_url %}
+{% url 'products:all_products' as all_product_url %}
+{% url 'accounts:login' as login_url %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ all_product_url }}">
+      <img src="{% static 'products/img/logo.png' %}" alt="ecommerce logo" width="30" height="24" class="d-inline-block align-text-top">
+      Ecommerce</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Account
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% if request.user.is_authenticated %}
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+              </li>
+            {% else %}
+              <li>
+                <a class="dropdown-item" href="{{ login_url }}">Login</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+                <a class="dropdown-item" href="#">Register</a>
+              </li>
+            {% endif %}
+          </ul>
+        </li>
+        {% if request.user.is_authenticated and perms.products.add_product %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Management
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="{{add_product_url}}">Add Product</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+                <a class="dropdown-item" href="http://localhost:8000/admin" target="_blank">Admin</a>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'cart:home' %}">Cart</a>
+          </li>
+        {% endif %}
+      </ul>
+      {% include 'search/snippets/search-form.html' %}
+    </div>
+  </div>
+</nav>

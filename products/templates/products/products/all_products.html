@@ -1,0 +1,13 @@
+{% extends 'products/base/base.html' %}
+
+{% block content %}
+  {% if object_list.exists %}
+    {% include 'products/base/cards.html' %}
+  {% else %}
+    <div class="row text-center mt-3">
+      <p>
+        <h5>All of our products are out of stock</h5>
+      </p>
+    </div>
+  {% endif %}
+{% endblock content %}

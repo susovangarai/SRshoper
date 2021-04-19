@@ -1,0 +1,40 @@
+{% extends 'products/base/base.html' %} {% load static %} {% block content %}
+<div
+  class="row wow fadeIn animated"
+  style="visibility: visible; animation-name: fadeIn"
+>
+  <div class="col-md-6 mb-4">
+    <img src="{{ object.image.url }}" class="img-fluid" alt="" />
+  </div>
+
+  <div class="col-md-6 mb-4">
+    <div class="p-4">
+      <p class="lead">
+        <span>₹ {{object.price}}</span>
+      </p>
+
+      <p class="lead font-weight-bold">{{object.title}}</p>
+      <p>{{object.description}}</p>
+
+      <form class="d-flex justify-content-left" style="width: 18rem">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input
+            type="number"
+            value="1"
+            aria-label="Quantity"
+            class="form-control"
+          />
+          <button
+            class="btn btn-primary btn-md my-0 p waves-effect waves-light"
+            type="submit"
+          >
+            Add to cart
+            <i class="fas fa-shopping-cart ml-1"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

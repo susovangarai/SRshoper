@@ -1,0 +1,33 @@
+<div class="row mt-3">
+  {% for item in object_list %}
+    <div class="col-lg-4 col-md-6">
+      <div class="card mx-auto my-2" style="width: 18rem; ">
+        <img class="card-img-top" src="{{ item.get_image_url }}" style="height: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            ₹
+            {{ item.price}}</h6>
+          <p class="card-text">
+            Launched:
+            {{ item.created }}
+          </p>
+          <p class="card-text">
+            Stocked:
+            {{ item.modified|timesince}}
+            ago
+          </p>
+          <div class="d-grid gap-2 d-md-block">
+            {% if request.user.is_authenticated and perms.products.add_product %}
+              <a href="{% url 'products:update' item.id %}" class="btn btn-primary" id="{{item.id}}">Edit</a>
+              <a href="{% url 'products:delete' item.id %}" class="btn btn-danger">Delete</a>
+            {% else %}
+              <a href="{{item.get_absolute_url}}" class="btn btn-secondary">Details</a>
+              <button data-product="{{item.id}}" data-action="add" class="btn btn btn-outline-success add-btn update-cart">Add to cart</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
